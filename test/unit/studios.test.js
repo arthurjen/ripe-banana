@@ -1,7 +1,7 @@
 const chai = require('chai');
 const { assert } = chai;
 const Studio = require('../../lib/models/studio');
-// const { getErrors } = require('./helpers');
+const { getErrors } = require('./helpers');
 
 describe('Studio model', () => {
 
@@ -20,6 +20,12 @@ describe('Studio model', () => {
         delete json._id;
         assert.deepEqual(json, data);
         assert.isUndefined(studio.validateSync());
+    });
+
+    it('validates required name', () => {
+        const studio = new Studio({});
+        const errors = getErrors(studio.validateSync(), 1);
+        assert.equal(errors.name.kind, 'required');
     });
 
 });
