@@ -63,8 +63,8 @@ describe('Studios API', () => {
         return request
             .delete(`/api/studios/${warner._id}`)
             .then(checkOk)
-            .then(res => {
-                assert.deepEqual(res.body, { removed: true });
+            .then(({ body }) => {
+                assert.isTrue(body.removed);
                 return request.get('/api/studios');
             })
             .then(checkOk)

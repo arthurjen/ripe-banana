@@ -80,7 +80,7 @@ describe('Actors API', () => {
             .del(`/api/actors/${tom._id}`)
             .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, { removed: true });
+                assert.isTrue(body.removed);
                 return request.get('/api/actors');
             })
             .then(checkOk)
