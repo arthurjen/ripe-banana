@@ -69,4 +69,21 @@ describe('Studios API', () => {
                 assert.deepEqual(body, [warner, disney]);
             });
     });
+
+    //TODO: studios cannot be deleted if they exist as properties of films/actors
+    it('Removes a studio on DELETE', () => {
+        return request
+            .delete(`/api/studios/${warner._id}`)
+            .then(checkOk)
+            .then(res => {
+                assert.deepEqual(res.body, { removed: true });
+                return request.get('/api/studios');
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                delete disney.address;
+                delete disney.__v;
+                assert.deepEqual(body, [disney]);
+            });
+    });
 });
