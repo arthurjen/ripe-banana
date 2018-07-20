@@ -12,7 +12,6 @@ describe('Studios API', () => {
     let warner;
     let disney;
 
-
     beforeEach(() => {
         return save({
             name: 'Warner Bros.',
@@ -37,14 +36,32 @@ describe('Studios API', () => {
             .then(data => disney = data);
     });
 
+    let banks;
+    beforeEach(() => {
+        return save({
+            title: 'Saving Mr.Banks',
+            released: 2013,
+            studio: disney._id
+        }, 'films')
+            .then(saved => banks = saved);
+    });
+
     it('saves a studio', () => {
         assert.isOk(warner._id);
         assert.isOk(disney._id);
     });
 
-    //TODO: 
-    it.skip('returns a studio on GET', () => {
-        
+    it.only('returns a studio on GET', () => {
+        return request
+            .get(`/api/studios/${disney._id}`)
+            .then(checkOk)
+            .then(({ body }) => {
+                disney.films = [{
+                    _id: banks._id,
+                    title: banks.title
+                }];
+                assert.deepEqual(body, disney);
+            });
     });
 
     it('returns all studios on GET', () => {
