@@ -4,7 +4,7 @@ const Film = require('../../lib/models/film');
 const { getErrors } = require('./helpers');
 const { Types } = require('mongoose');
 
-describe.only('Film model', () => {
+describe('Film model', () => {
 
     it('validates good model', () => {
         const data = {
