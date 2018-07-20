@@ -5,7 +5,7 @@ const save = require('./helpers');
 
 const { checkOk } = request;
 
-describe.only('Films API', () => {
+describe('Films API', () => {
 
     beforeEach(() => dropCollection('films'));
     beforeEach(() => dropCollection('studios'));
@@ -65,23 +65,26 @@ describe.only('Films API', () => {
         
     });
 
-    // it('returns all films on GET', () => {
-    //     return request
-    //         .get('/api/films')
-    //         .then(checkOk)
-    //         .then(({ body }) => {
-    //             assert.deepEqual(body, [arthur, mariah]);
-    //         });
-    // });
+    it('returns all films on GET', () => {
+        return request
+            .get('/api/films')
+            .then(checkOk)
+            .then(({ body }) => {
+                delete banks.cast;
+                delete disney.address;
+                banks.studio = disney;
+                assert.deepEqual(body, [banks]);
+            });
+    });
 
-    // it('updates a film', () => {
-    //     arthur.company = 'Netflix';
-    //     return request
-    //         .put(`/api/films/${arthur._id}`)
-    //         .send(arthur)
-    //         .then(checkOk)
-    //         .then(({ body }) => {
-    //             assert.deepEqual(body, arthur);
-    //         });
-    // });
+    it('updates a film', () => {
+        banks.released = 2014;
+        return request
+            .put(`/api/films/${banks._id}`)
+            .send(banks)
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, banks);
+            });
+    });
 });

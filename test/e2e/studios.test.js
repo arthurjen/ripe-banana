@@ -4,7 +4,7 @@ const { dropCollection } = require('./_db');
 
 const { checkOk } = request;
 
-describe('Studios API', () => {
+describe.only('Studios API', () => {
 
     beforeEach(() => dropCollection('studios'));
 
@@ -29,6 +29,7 @@ describe('Studios API', () => {
             } 
         })
             .then(data => {
+                delete data.__v;
                 warner = data;
             });
     });
@@ -43,6 +44,7 @@ describe('Studios API', () => {
             } 
         })
             .then(data => {
+                delete data.__v;
                 disney = data;
             });
     });
