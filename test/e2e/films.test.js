@@ -1,6 +1,7 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./_db');
+const save = require('./helpers');
 
 const { checkOk } = request;
 
@@ -11,14 +12,6 @@ describe.only('Films API', () => {
     beforeEach(() => dropCollection('actors'));
 
     let banks;
-
-    function save(data, resource) {
-        return request
-            .post(`/api/${resource}`)
-            .send(data)
-            .then(checkOk)
-            .then(({ body }) => body);
-    }
 
     let tom;
     beforeEach(() => {
