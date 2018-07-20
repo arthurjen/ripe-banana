@@ -1,23 +1,17 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./_db');
+const save = require('./helpers');
 
 const { checkOk } = request;
 
-describe.only('Studios API', () => {
+describe('Studios API', () => {
 
     beforeEach(() => dropCollection('studios'));
 
     let warner;
     let disney;
 
-    function save(studio) {
-        return request
-            .post('/api/studios')
-            .send(studio)
-            .then(checkOk)
-            .then(({ body }) => body);
-    }
 
     beforeEach(() => {
         return save({
@@ -27,11 +21,8 @@ describe.only('Studios API', () => {
                 state: 'California',
                 country: 'USA'
             } 
-        })
-            .then(data => {
-                delete data.__v;
-                warner = data;
-            });
+        }, 'studios')
+            .then(data => warner = data);
     });
 
     beforeEach(() => {
@@ -42,11 +33,8 @@ describe.only('Studios API', () => {
                 state: 'California',
                 country: 'USA'
             } 
-        })
-            .then(data => {
-                delete data.__v;
-                disney = data;
-            });
+        }, 'studios')
+            .then(data => disney = data);
     });
 
     it('saves a studio', () => {

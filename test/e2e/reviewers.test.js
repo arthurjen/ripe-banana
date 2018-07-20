@@ -1,7 +1,7 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./_db');
-
+const save = require('./helpers');
 const { checkOk } = request;
 
 describe('Reviewers API', () => {
@@ -11,32 +11,20 @@ describe('Reviewers API', () => {
     let arthur;
     let mariah;
 
-    function save(reviewer) {
-        return request
-            .post('/api/reviewers')
-            .send(reviewer)
-            .then(checkOk)
-            .then(({ body }) => body);
-    }
-
     beforeEach(() => {
         return save({
             name: 'Arthur Jen',
             company: 'Alchemy Movie Lab'
-        })
-            .then(data => {
-                arthur = data;
-            });
+        }, 'reviewers')
+            .then(data => arthur = data);
     });
 
     beforeEach(() => {
         return save({
             name: 'Mariah Adams',
             company: 'The Train Spotters'
-        })
-            .then(data => {
-                mariah = data;
-            });
+        }, 'reviewers')
+            .then(data => mariah = data);
     });
 
     it('saves a reviewer', () => {
@@ -65,6 +53,7 @@ describe('Reviewers API', () => {
             .send(arthur)
             .then(checkOk)
             .then(({ body }) => {
+                delete body.__v;
                 assert.deepEqual(body, arthur);
             });
     });

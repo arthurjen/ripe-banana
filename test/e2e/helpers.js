@@ -6,7 +6,10 @@ function save(data, resource) {
         .post(`/api/${resource}`)
         .send(data)
         .then(checkOk)
-        .then(({ body }) => body);
+        .then(({ body }) => {
+            delete body.__v;
+            return body;
+        });
 }
 
 module.exports = save;

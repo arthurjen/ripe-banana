@@ -51,9 +51,7 @@ describe('Films API', () => {
             }]
         }, 
         'films')
-            .then(data => {
-                banks = data;
-            });
+            .then(data => banks = data);
     });
 
     it('saves a film', () => {
@@ -77,14 +75,12 @@ describe('Films API', () => {
             });
     });
 
-    it('updates a film', () => {
-        banks.released = 2014;
+    it('Removes a film on DELETE', () => {
         return request
-            .put(`/api/films/${banks._id}`)
-            .send(banks)
+            .delete(`/api/films/${banks._id}`)
             .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, banks);
+                assert.isTrue(body.removed);
             });
     });
 });
