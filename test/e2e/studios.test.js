@@ -64,8 +64,6 @@ describe('Studios API', () => {
             .then(({ body }) => {
                 delete warner.address;
                 delete disney.address;
-                delete warner.__v;
-                delete disney.__v;
                 assert.deepEqual(body, [warner, disney]);
             });
     });
@@ -82,7 +80,6 @@ describe('Studios API', () => {
             .then(checkOk)
             .then(({ body }) => {
                 delete disney.address;
-                delete disney.__v;
                 assert.deepEqual(body, [disney]);
             });
     });
