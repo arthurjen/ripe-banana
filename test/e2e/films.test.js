@@ -11,8 +11,6 @@ describe.only('Films API', () => {
     beforeEach(() => dropCollection('studios'));
     beforeEach(() => dropCollection('actors'));
 
-    let banks;
-
     let tom;
     beforeEach(() => {
         return save(
@@ -41,6 +39,7 @@ describe.only('Films API', () => {
             .then(saved => disney = saved);
     });
 
+    let banks;
     beforeEach(() => {
         return save({
             title: 'Saving Mr. Banks',
