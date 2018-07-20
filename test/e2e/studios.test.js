@@ -51,4 +51,22 @@ describe('Studios API', () => {
         assert.isOk(warner._id);
         assert.isOk(disney._id);
     });
+
+    //TODO: 
+    it.skip('returns a studio on GET', () => {
+        
+    });
+
+    it('returns all studios on GET', () => {
+        return request
+            .get('/api/studios')
+            .then(checkOk)
+            .then(({ body }) => {
+                delete warner.address;
+                delete disney.address;
+                delete warner.__v;
+                delete disney.__v;
+                assert.deepEqual(body, [warner, disney]);
+            });
+    });
 });
