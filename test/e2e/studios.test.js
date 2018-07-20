@@ -8,6 +8,7 @@ const { checkOk } = request;
 describe('Studios API', () => {
 
     beforeEach(() => dropCollection('studios'));
+    beforeEach(() => dropCollection('films'));
 
     let warner;
     let disney;
@@ -51,7 +52,7 @@ describe('Studios API', () => {
         assert.isOk(disney._id);
     });
 
-    it.only('returns a studio on GET', () => {
+    it('returns a studio on GET', () => {
         return request
             .get(`/api/studios/${disney._id}`)
             .then(checkOk)

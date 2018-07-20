@@ -1,30 +1,24 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./_db');
-
+const { Types } = require('mongoose');
+const save = require('./helpers');
 const { checkOk } = request;
 
 describe('Actors API', () => {
 
     beforeEach(() => dropCollection('actors'));
+    beforeEach(() => dropCollection('films'));
 
     let tom;
     let rachel;
-
-    function save(actor) {
-        return request
-            .post('/api/actors')
-            .send(actor)
-            .then(checkOk)
-            .then(({ body }) => body);
-    }
 
     beforeEach(() => {
         return save({
             name: 'Tom Hanks',
             dob: new Date(1956, 6, 9),
             pob: 'Concord, CA'
-        })
+        }, 'actors')
             .then(data => {
                 tom = data;
             });
@@ -32,13 +26,27 @@ describe('Actors API', () => {
 
     beforeEach(() => {
         return save({
-            name: 'Mariah Adams',
+            name: 'Rachel McAdams',
             dob: new Date(1978, 10, 17),
             pob: 'London, Canada'
-        })
+        }, 'actors')
             .then(data => {
                 rachel = data;
             });
+    });
+
+    let banks;
+    beforeEach(() => {
+        return save({
+            title: 'Saving Mr. Banks',
+            studio: Types.ObjectId(),
+            released: 2013,
+            cast: [{
+                role: 'Walt Disney',
+                actor: tom._id
+            }]
+        }, 'films')
+            .then(data => banks = data);
     });
 
     it('saves an actor', () => {
@@ -46,9 +54,17 @@ describe('Actors API', () => {
         assert.isOk(rachel._id);
     });
 
-    //TODO: 
-    it.skip('returns an actor on GET', () => {
-        
+   
+    it('returns an actor on GET', () => {
+        return request
+            .get(`/api/actors/${tom._id}`)
+            .then(checkOk)
+            .then(({ body }) => {
+                delete banks.cast;
+                delete banks.studio;
+                tom.films = [banks];
+                assert.deepEqual(body, tom);
+            });
     });
 
     it('returns all actors on GET', () => {
@@ -71,6 +87,7 @@ describe('Actors API', () => {
             .send(tom)
             .then(checkOk)
             .then(({ body }) => {
+                delete body.__v;
                 assert.deepEqual(body, tom);
             });
     });
@@ -81,13 +98,6 @@ describe('Actors API', () => {
             .then(checkOk)
             .then(({ body }) => {
                 assert.isTrue(body.removed);
-                return request.get('/api/actors');
-            })
-            .then(checkOk)
-            .then(({ body }) => {
-                delete rachel.dob;
-                delete rachel.pob;
-                assert.deepEqual(body, [rachel]);
             });
     });
 });
