@@ -4,7 +4,7 @@ const Review = require('../../lib/models/review');
 const { getErrors } = require('./helpers');
 const { Types } = require('mongoose');
 
-describe.only('Review model', () => {
+describe('Review model', () => {
 
     it('validates good model', () => {
         const data = {
