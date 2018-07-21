@@ -1,17 +1,12 @@
 const { assert } = require('chai');
 const request = require('./request');
-const { dropCollection } = require('./_db');
-const save = require('./helpers');
+const { dropDatabase } = require('./_db');
 
-const { checkOk } = request;
+const { checkOk, save, makeSimple } = request;
 
-describe('Films API', () => {
+describe.only('Films API', () => {
 
-    beforeEach(() => dropCollection('films'));
-    beforeEach(() => dropCollection('studios'));
-    beforeEach(() => dropCollection('actors'));
-    beforeEach(() => dropCollection('reviews'));
-    beforeEach(() => dropCollection('reviewers'));
+    beforeEach(() => dropDatabase());
 
     let tom;
     beforeEach(() => {
@@ -22,7 +17,6 @@ describe('Films API', () => {
                 pob: 'Concord, CA'
             },
             'actors')
-            .then(checkOk)
             .then(saved => tom = saved);
     });
 

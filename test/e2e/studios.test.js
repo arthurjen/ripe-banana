@@ -5,7 +5,7 @@ const save = require('./helpers');
 
 const { checkOk } = request;
 
-describe.only('Studios API', () => {
+describe('Studios API', () => {
 
     beforeEach(() => dropCollection('studios'));
     beforeEach(() => dropCollection('films'));
@@ -92,7 +92,7 @@ describe.only('Studios API', () => {
     });
     
     //TODO: studios cannot be deleted if they exist as properties of films/actors
-    it.only('DOES NOT remove a studio if it exists as a property of a film', () => {
+    it('DOES NOT remove a studio if it exists as a property of a film', () => {
         return request
             .delete(`/api/studios/${warner._id}`)
             .then(checkOk)
