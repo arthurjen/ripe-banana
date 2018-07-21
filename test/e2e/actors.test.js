@@ -1,14 +1,12 @@
 const { assert } = require('chai');
 const request = require('./request');
-const { dropCollection } = require('./_db');
 const { Types } = require('mongoose');
-const save = require('./helpers');
-const { checkOk } = request;
+const { dropDatabase } = require('./_db');
+const { checkOk, save } = request;
 
 describe('Actors API', () => {
 
-    beforeEach(() => dropCollection('actors'));
-    beforeEach(() => dropCollection('films'));
+    beforeEach(() => dropDatabase());
 
     let tom;
     let rachel;

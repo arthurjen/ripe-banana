@@ -1,15 +1,12 @@
 const { assert } = require('chai');
 const request = require('./request');
-const { dropCollection } = require('./_db');
-const save = require('./helpers');
-const { checkOk } = request;
+const { dropDatabase } = require('./_db');
+const { checkOk, save } = request;
 const { Types } = require('mongoose');
 
 describe('Reviewers API', () => {
 
-    beforeEach(() => dropCollection('reviewers'));
-    beforeEach(() => dropCollection('reviews'));
-    beforeEach(() => dropCollection('films'));
+    beforeEach(() => dropDatabase());
 
     let arthur;
     let mariah;

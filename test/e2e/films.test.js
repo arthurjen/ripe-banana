@@ -1,10 +1,9 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropDatabase } = require('./_db');
+const { checkOk, save } = request;
 
-const { checkOk, save, makeSimple } = request;
-
-describe.only('Films API', () => {
+describe('Films API', () => {
 
     beforeEach(() => dropDatabase());
 
