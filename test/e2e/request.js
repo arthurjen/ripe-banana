@@ -28,11 +28,12 @@ request.save = (data, resource) => {
 // };
 
 request.makeSimple = data => {
-    return {
+    const simple = {
         _id: data._id,
-        title: data.title,
-        name: data.name
     };
+    if(data.title) simple.title = data.title;
+    if(data.name) simple.name = data.name;
+    return simple;
 };
 
 after(done => server.close(done));

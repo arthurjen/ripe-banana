@@ -1,9 +1,9 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropDatabase } = require('./_db');
-const { checkOk, save } = request;
+const { checkOk, save, makeSimple } = request;
 
-describe('Films API', () => {
+describe.only('Films API', () => {
 
     beforeEach(() => dropDatabase());
 
@@ -74,29 +74,28 @@ describe('Films API', () => {
         assert.isOk(banks._id);
     });
 
-    //TODO: 
     it('returns a film on GET', () => {
         return request
             .get(`/api/films/${banks._id}`)
             .then(checkOk)
             .then(({ body }) => {
-                delete review.createdAt;
-                delete review.updatedAt;
-                delete review.film;
-                review.reviewer = {
-                    _id: mariah._id,
-                    name: mariah.name
-                };
-                banks.studio = {
-                    _id: disney._id,
-                    name: disney.name
-                };
-                banks.cast[0].actor = {
-                    _id: tom._id,
-                    name: tom.name
-                };
-                banks.reviews = [review];
-                assert.deepEqual(body, banks);
+                assert.deepEqual(body, {
+                    _id: banks._id,
+                    title: banks.title,
+                    studio: makeSimple(disney),
+                    released: banks.released,
+                    cast: [{
+                        _id: banks.cast[0]._id,
+                        role: banks.cast[0].role,
+                        actor: makeSimple(tom)
+                    }],
+                    reviews: [{
+                        _id: review._id,
+                        rating: review.rating,
+                        review: review.review,
+                        reviewer: makeSimple(mariah)
+                    }]
+                });
             });
     });
 
