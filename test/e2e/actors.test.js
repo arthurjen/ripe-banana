@@ -20,7 +20,6 @@ describe('Actors API', () => {
             });
     });
 
-
     it('saves an actor', () => {
         assert.isOk(tom._id);
         assert.equal(tom.name, 'Tom Hanks');

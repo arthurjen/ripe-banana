@@ -8,13 +8,13 @@ describe('Studios API', () => {
     before(() => dropDatabase());
 
     let warner, disney;
-    let banks;
+    let banks, gameNight;
 
     before(() => {
         return saveAll()
             .then(data => {
                 [warner, disney] = data.studios;
-                banks = data.films[0];
+                [banks, gameNight] = data.films;
             });
     });    
 
@@ -22,8 +22,6 @@ describe('Studios API', () => {
         assert.isOk(warner._id);
         assert.isOk(disney._id);
     });
-
-    
 
     it('returns a studio on GET', () => {
         return request
@@ -51,23 +49,8 @@ describe('Studios API', () => {
             });
     });
 
-    it('Removes a studio on DELETE', () => {
-        return request
-            .delete(`/api/studios/${warner._id}`)
-            .then(checkOk)
-            .then(({ body }) => {
-                assert.isTrue(body.removed);
-                return request.get('/api/studios');
-            })
-            .then(checkOk)
-            .then(({ body }) => {
-                delete disney.address;
-                assert.deepEqual(body, [disney]);
-            });
-    });
-    
     //TODO: studios cannot be deleted if they exist as properties of films/actors
-    it.skip('DOES NOT remove a studio if it exists as a property of a film', () => {
+    it('DOES NOT remove a studio if it exists as a property of a film', () => {
         return request
             .delete(`/api/studios/${warner._id}`)
             .then(checkOk)
@@ -75,4 +58,20 @@ describe('Studios API', () => {
                 assert.isFalse(body.removed);
             });
     });
+
+    it('Removes a studio on DELETE', () => {
+        return request
+            .delete(`/api/films/${gameNight._id}`)
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.isTrue(body.removed);
+                return request
+                    .delete(`/api/studios/${warner._id}`);
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.isTrue(body.removed);
+            });
+    });
+    
 });
