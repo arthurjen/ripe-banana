@@ -49,7 +49,6 @@ describe('Studios API', () => {
             });
     });
 
-    //TODO: studios cannot be deleted if they exist as properties of films/actors
     it('DOES NOT remove a studio if it exists as a property of a film', () => {
         return request
             .delete(`/api/studios/${warner._id}`)

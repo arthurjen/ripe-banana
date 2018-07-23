@@ -70,9 +70,24 @@ describe('Actors API', () => {
             });
     });
 
+    it('DOES NOT remove an actor if they exist as a property of a film', () => {
+        return request
+            .delete(`/api/actors/${tom._id}`)
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.isFalse(body.removed);
+            });
+    });
+
     it('deletes an actor', () => {
         return request
-            .del(`/api/actors/${tom._id}`)
+            .del(`/api/films/${banks._id}`)
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.isTrue(body.removed);
+                return request
+                    .del(`/api/actors/${tom._id}`);
+            })
             .then(checkOk)
             .then(({ body }) => {
                 assert.isTrue(body.removed);
