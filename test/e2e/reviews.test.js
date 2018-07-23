@@ -4,7 +4,7 @@ const { dropDatabase } = require('./_db');
 const { checkOk, save } = request;
 const { Types } = require('mongoose');
 
-describe('Reviews API', () => {
+describe.only('Reviews API', () => {
 
     beforeEach(() => dropDatabase());
     

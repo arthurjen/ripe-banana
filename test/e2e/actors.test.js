@@ -1,55 +1,33 @@
 const { assert } = require('chai');
 const request = require('./request');
-const { Types } = require('mongoose');
 const { dropDatabase } = require('./_db');
-const { checkOk, save } = request;
+const { checkOk, saveAll, makeSimple } = request;
 
 describe('Actors API', () => {
 
-    beforeEach(() => dropDatabase());
+    before(() => dropDatabase());
 
     let tom;
     let rachel;
-
-    beforeEach(() => {
-        return save({
-            name: 'Tom Hanks',
-            dob: new Date(1956, 6, 9),
-            pob: 'Concord, CA'
-        }, 'actors')
-            .then(data => {
-                tom = data;
-            });
-    });
-
-    beforeEach(() => {
-        return save({
-            name: 'Rachel McAdams',
-            dob: new Date(1978, 10, 17),
-            pob: 'London, Canada'
-        }, 'actors')
-            .then(data => {
-                rachel = data;
-            });
-    });
-
+    let emma;
     let banks;
-    beforeEach(() => {
-        return save({
-            title: 'Saving Mr. Banks',
-            studio: Types.ObjectId(),
-            released: 2013,
-            cast: [{
-                role: 'Walt Disney',
-                actor: tom._id
-            }]
-        }, 'films')
-            .then(data => banks = data);
+
+    before(() => {
+        return saveAll()
+            .then(data => {
+                [tom, rachel, emma] = data.actors;
+                banks = data.films[0];
+            });
     });
+
 
     it('saves an actor', () => {
         assert.isOk(tom._id);
+        assert.equal(tom.name, 'Tom Hanks');
         assert.isOk(rachel._id);
+        assert.equal(rachel.name, 'Rachel McAdams');
+        assert.isOk(emma._id);
+        assert.equal(emma.name, 'Emma Thompson');
     });
 
    
@@ -58,9 +36,11 @@ describe('Actors API', () => {
             .get(`/api/actors/${tom._id}`)
             .then(checkOk)
             .then(({ body }) => {
-                delete banks.cast;
-                delete banks.studio;
-                tom.films = [banks];
+                tom.films = [{
+                    _id: banks._id,
+                    title: banks.title,
+                    released: banks.released
+                }];
                 assert.deepEqual(body, tom);
             });
     });
@@ -70,11 +50,11 @@ describe('Actors API', () => {
             .get('/api/actors')
             .then(checkOk)
             .then(({ body }) => {
-                delete tom.dob;
-                delete rachel.dob;
-                delete tom.pob;
-                delete rachel.pob;
-                assert.deepEqual(body, [tom, rachel]);
+                assert.deepEqual(body, [
+                    makeSimple(tom),
+                    makeSimple(rachel),
+                    makeSimple(emma)
+                ]);
             });
     });
 
@@ -86,6 +66,7 @@ describe('Actors API', () => {
             .then(checkOk)
             .then(({ body }) => {
                 delete body.__v;
+                delete tom.films;
                 assert.deepEqual(body, tom);
             });
     });
