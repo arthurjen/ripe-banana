@@ -5,13 +5,13 @@ const { checkOk, saveAll, makeSimple } = request;
 
 describe('Reviewers API', () => {
 
-    before(() => dropDatabase());
+    beforeEach(() => dropDatabase());
 
     let arthur, mariah;
     let review;
     let banks;
 
-    before(() => {
+    beforeEach(() => {
         return saveAll()
             .then(data => {
                 [arthur, mariah] = data.reviewers;

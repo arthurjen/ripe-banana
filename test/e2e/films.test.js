@@ -5,7 +5,7 @@ const { checkOk, saveAll, makeSimple } = request;
 
 describe('Films API', () => {
 
-    before(() => dropDatabase());
+    beforeEach(() => dropDatabase());
 
     let tom, emma;
     let banks, gameNight;
@@ -13,7 +13,7 @@ describe('Films API', () => {
     let mariah, arthur;
     let reviewMariah, reviewArthur;
 
-    before(() => {
+    beforeEach(() => {
         return saveAll()
             .then(data => {
                 [tom,, emma] = data.actors;

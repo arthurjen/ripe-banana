@@ -5,12 +5,12 @@ const { checkOk, saveAll, makeSimple } = request;
 
 describe('Reviews API', () => {
 
-    before(() => dropDatabase());
+    beforeEach(() => dropDatabase());
     
     let banks;
     let mariahReview, arthurReview;
     
-    before(() => {
+    beforeEach(() => {
         return saveAll()
             .then(data => {
                 banks = data.films[0];

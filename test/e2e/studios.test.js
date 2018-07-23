@@ -5,22 +5,38 @@ const { checkOk, saveAll, makeSimple } = request;
 
 describe('Studios API', () => {
 
-    before(() => dropDatabase());
+    beforeEach(() => dropDatabase());
 
     let warner, disney;
     let banks, gameNight;
 
-    before(() => {
-        return saveAll()
-            .then(data => {
-                [warner, disney] = data.studios;
-                [banks, gameNight] = data.films;
+    beforeEach(() => {
+        const data = {
+            name: 'Warner Bros.',
+            address: {
+                city: 'Burbank',
+                state: 'California',
+                country: 'USA'
+            }    
+        };
+        return request
+            .post('/api/studios')
+            .send(data)
+            // .then(checkOk)
+            .then(({ body }) => {
+                delete body.__v;
+                warner = body;
             });
+        // return saveAll()
+        //     .then(data => {
+        //         [warner, disney] = data.studios;
+        //         [banks, gameNight] = data.films;
+        //     });
     });    
 
-    it('saves a studio', () => {
+    it.only('saves a studio', () => {
         assert.isOk(warner._id);
-        assert.isOk(disney._id);
+        // assert.isOk(disney._id);
     });
 
     it('returns a studio on GET', () => {
@@ -37,15 +53,14 @@ describe('Studios API', () => {
             });
     });
 
-    it('returns all studios on GET', () => {
+    it.only('returns all studios on GET', () => {
         return request
             .get('/api/studios')
             .then(checkOk)
             .then(({ body }) => {
                 delete warner.address;
-                delete disney.address;
-                delete disney.films;
-                assert.deepEqual(body, [warner, disney]);
+                // delete disney.address;
+                assert.deepEqual(body, [warner]);
             });
     });
 

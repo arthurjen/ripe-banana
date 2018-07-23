@@ -5,14 +5,14 @@ const { checkOk, saveAll, makeSimple } = request;
 
 describe('Actors API', () => {
 
-    before(() => dropDatabase());
+    beforeEach(() => dropDatabase());
 
     let tom;
     let rachel;
     let emma;
     let banks;
 
-    before(() => {
+    beforeEach(() => {
         return saveAll()
             .then(data => {
                 [tom, rachel, emma] = data.actors;
