@@ -1,64 +1,41 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropDatabase } = require('./_db');
-const { checkOk, save } = request;
+const { checkOk, saveAll, makeSimple } = request;
 
 describe('Studios API', () => {
 
-    beforeEach(() => dropDatabase());
+    before(() => dropDatabase());
 
-    let warner;
-    let disney;
-
-    beforeEach(() => {
-        return save({
-            name: 'Warner Bros.',
-            address: {
-                city: 'Burbank',
-                state: 'California',
-                country: 'USA'
-            } 
-        }, 'studios')
-            .then(data => warner = data);
-    });
-
-    beforeEach(() => {
-        return save({
-            name: 'Disney',
-            address: {
-                city: 'Burbank',
-                state: 'California',
-                country: 'USA'
-            } 
-        }, 'studios')
-            .then(data => disney = data);
-    });
-
+    let warner, disney;
     let banks;
-    beforeEach(() => {
-        return save({
-            title: 'Saving Mr.Banks',
-            released: 2013,
-            studio: disney._id
-        }, 'films')
-            .then(saved => banks = saved);
-    });
+
+    before(() => {
+        return saveAll()
+            .then(data => {
+                [warner, disney] = data.studios;
+                banks = data.films[0];
+            });
+    });    
 
     it('saves a studio', () => {
         assert.isOk(warner._id);
         assert.isOk(disney._id);
     });
 
+    
+
     it('returns a studio on GET', () => {
         return request
             .get(`/api/studios/${disney._id}`)
             .then(checkOk)
             .then(({ body }) => {
-                disney.films = [{
-                    _id: banks._id,
-                    title: banks.title
-                }];
-                assert.deepEqual(body, disney);
+                assert.deepEqual(body, {
+                    _id: disney._id,
+                    name: disney.name,
+                    address: disney.address,
+                    films: [makeSimple(banks)]
+                });
             });
     });
 
@@ -69,6 +46,7 @@ describe('Studios API', () => {
             .then(({ body }) => {
                 delete warner.address;
                 delete disney.address;
+                delete disney.films;
                 assert.deepEqual(body, [warner, disney]);
             });
     });

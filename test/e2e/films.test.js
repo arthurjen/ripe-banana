@@ -78,10 +78,18 @@ describe('Films API', () => {
             .get('/api/films')
             .then(checkOk)
             .then(({ body }) => {
-                delete banks.cast;
-                delete gameNight.cast;
-                banks.studio = makeSimple(disney);
-                gameNight.studio = makeSimple(warner);
+                banks = {
+                    _id: banks._id,
+                    title: banks.title,
+                    released: banks.released,
+                    studio: makeSimple(disney)
+                };
+                gameNight = {
+                    _id: gameNight._id,
+                    title: gameNight.title,
+                    released: gameNight.released,
+                    studio: makeSimple(warner)
+                };
                 assert.deepEqual(body, [banks, gameNight]);
             });
     });

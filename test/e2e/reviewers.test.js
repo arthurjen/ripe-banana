@@ -7,8 +7,7 @@ describe('Reviewers API', () => {
 
     before(() => dropDatabase());
 
-    let arthur;
-    let mariah;
+    let arthur, mariah;
     let review;
     let banks;
 
@@ -49,8 +48,6 @@ describe('Reviewers API', () => {
                 assert.deepEqual(body, arthur);
             });
     });
-
-    
 
     it('updates a reviewer', () => {
         arthur.company = 'Netflix';
