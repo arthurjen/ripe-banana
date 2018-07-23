@@ -1,54 +1,26 @@
 const { assert } = require('chai');
 const request = require('./request');
-const { dropCollection } = require('./_db');
-const save = require('./helpers');
-const { checkOk } = request;
-const { Types } = require('mongoose');
+const { dropDatabase } = require('./_db');
+const { checkOk, saveAll, makeSimple } = request;
 
 describe('Reviews API', () => {
 
-    beforeEach(() => dropCollection('reviews'));
-    beforeEach(() => dropCollection('reviewers'));
-    beforeEach(() => dropCollection('films'));
-
-    
-    
-    let mariah;
-    beforeEach(() => {
-        return save({
-            name: 'Mariah Adams',
-            company: 'The Train Spotters'
-        }, 'reviewers')
-            .then(data => mariah = data);
-    });
+    before(() => dropDatabase());
     
     let banks;
-    beforeEach(() => {
-        return save({
-            title: 'Saving Mr. Banks',
-            studio: Types.ObjectId(),
-            released: 2013,
-            cast: [{
-                role: 'Walt Disney',
-                actor: Types.ObjectId()
-            }]
-        }, 'films')
-            .then(data => banks = data);
-    });
-
-    let review;
-    beforeEach(() => {
-        return save({
-            rating: 5,
-            reviewer: mariah._id,
-            review: 'Tom Hanks is the best!',
-            film: banks._id,
-        }, 'reviews')
-            .then(data => review = data);
+    let mariahReview, arthurReview;
+    
+    before(() => {
+        return saveAll()
+            .then(data => {
+                banks = data.films[0];
+                [mariahReview, arthurReview] = data.reviews;
+            });
     });
 
     it('saves a review', () => {
-        assert.isOk(review._id);
+        assert.isOk(mariahReview._id);
+        assert.isOk(arthurReview._id);
     });
 
     it('returns all reviews on GET', () => {
@@ -56,14 +28,19 @@ describe('Reviews API', () => {
             .get('/api/reviews')
             .then(checkOk)
             .then(({ body }) => {
-                delete review.reviewer;
-                delete review.createdAt;
-                delete review.updatedAt;
-                review.film = {
-                    _id: banks._id,
-                    title: banks.title
+                mariahReview = {
+                    _id: mariahReview._id,
+                    rating: mariahReview.rating,
+                    review: mariahReview.review,
+                    film: makeSimple(banks)
                 };
-                assert.deepEqual(body, [review]);
+                arthurReview = {
+                    _id: arthurReview._id,
+                    rating: arthurReview.rating,
+                    review: arthurReview.review,
+                    film: makeSimple(banks)
+                };
+                assert.deepEqual(body, [mariahReview, arthurReview]);
             });
     });
 

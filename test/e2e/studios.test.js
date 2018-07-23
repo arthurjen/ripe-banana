@@ -1,67 +1,41 @@
 const { assert } = require('chai');
 const request = require('./request');
-const { dropCollection } = require('./_db');
-const save = require('./helpers');
+const { dropDatabase } = require('./_db');
+const { checkOk, saveAll, makeSimple } = request;
 
-const { checkOk } = request;
+describe('Studios API', () => {
 
-describe.only('Studios API', () => {
+    before(() => dropDatabase());
 
-    beforeEach(() => dropCollection('studios'));
-    beforeEach(() => dropCollection('films'));
-
-    let warner;
-    let disney;
-
-    beforeEach(() => {
-        return save({
-            name: 'Warner Bros.',
-            address: {
-                city: 'Burbank',
-                state: 'California',
-                country: 'USA'
-            } 
-        }, 'studios')
-            .then(data => warner = data);
-    });
-
-    beforeEach(() => {
-        return save({
-            name: 'Disney',
-            address: {
-                city: 'Burbank',
-                state: 'California',
-                country: 'USA'
-            } 
-        }, 'studios')
-            .then(data => disney = data);
-    });
-
+    let warner, disney;
     let banks;
-    beforeEach(() => {
-        return save({
-            title: 'Saving Mr.Banks',
-            released: 2013,
-            studio: disney._id
-        }, 'films')
-            .then(saved => banks = saved);
-    });
+
+    before(() => {
+        return saveAll()
+            .then(data => {
+                [warner, disney] = data.studios;
+                banks = data.films[0];
+            });
+    });    
 
     it('saves a studio', () => {
         assert.isOk(warner._id);
         assert.isOk(disney._id);
     });
 
+    
+
     it('returns a studio on GET', () => {
         return request
             .get(`/api/studios/${disney._id}`)
             .then(checkOk)
             .then(({ body }) => {
-                disney.films = [{
-                    _id: banks._id,
-                    title: banks.title
-                }];
-                assert.deepEqual(body, disney);
+                assert.deepEqual(body, {
+                    _id: disney._id,
+                    name: disney.name,
+                    address: disney.address,
+                    films: [makeSimple(banks)]
+                });
             });
     });
 
@@ -72,6 +46,7 @@ describe.only('Studios API', () => {
             .then(({ body }) => {
                 delete warner.address;
                 delete disney.address;
+                delete disney.films;
                 assert.deepEqual(body, [warner, disney]);
             });
     });
@@ -92,7 +67,7 @@ describe.only('Studios API', () => {
     });
     
     //TODO: studios cannot be deleted if they exist as properties of films/actors
-    it.only('DOES NOT remove a studio if it exists as a property of a film', () => {
+    it.skip('DOES NOT remove a studio if it exists as a property of a film', () => {
         return request
             .delete(`/api/studios/${warner._id}`)
             .then(checkOk)

@@ -7,10 +7,10 @@ after(() => {
 });
 
 module.exports = {
-    dropCollection(name) {
-        return mongoose.connection.dropCollection(name)
+    dropDatabase() {
+        return mongoose.connection.dropDatabase()
             .catch(err => {
-                if(err.codeName !== 'NamespaceNotFound') throw err;
+                throw err;
             });
     }
 };
