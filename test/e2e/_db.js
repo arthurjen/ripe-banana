@@ -1,5 +1,5 @@
-const connect = require('../../lib/connect');
-connect('mongodb://localhost:27017/[ENTER DB NAME]');
+const connect = require('../../lib/utils/connect');
+connect('mongodb://localhost:27017/banana');
 const mongoose = require('mongoose');
 
 after(() => {
@@ -7,10 +7,10 @@ after(() => {
 });
 
 module.exports = {
-    dropCollection(name) {
-        return mongoose.connection.dropCollection(name)
+    dropDatabase() {
+        return mongoose.connection.dropDatabase()
             .catch(err => {
-                if(err.codeName !== 'NamespaceNotFound') throw err;
+                throw err;
             });
     }
 };
