@@ -1,9 +1,9 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropDatabase } = require('./_db');
-const { checkOk, saveAll, makeSimple } = request;
+const { checkOk, saveReviewerData, makeSimple } = request;
 
-describe('Reviewers API', () => {
+describe.only('Reviewers API', () => {
 
     beforeEach(() => dropDatabase());
 
@@ -12,7 +12,7 @@ describe('Reviewers API', () => {
     let banks;
 
     beforeEach(() => {
-        return saveAll()
+        return saveReviewerData()
             .then(data => {
                 [arthur, mariah] = data.reviewers;
                 review = data.reviews[1];

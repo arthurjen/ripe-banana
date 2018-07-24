@@ -54,6 +54,30 @@ request.saveActorData = () => {
         });
 };
 
+request.saveReviewerData = () => {
+    let arthur, mariah;
+    let banks;
+    return save(data.reviewers, 'reviewers')
+        .then(saved => {
+            data.reviewers = saved;
+            [arthur, mariah] = saved;
+            return save(data.films, 'films'); 
+        })
+        .then(saved => {
+            data.films = saved;
+            banks = saved[0];
+            data.reviews[0].reviewer = mariah._id;
+            data.reviews[0].film = banks._id;
+            data.reviews[1].reviewer = arthur._id;
+            data.reviews[1].film = banks._id;
+            return save(data.reviews, 'reviews');
+        })
+        .then(saved => {
+            data.reviews = saved;
+            return data;
+        });
+};
+
 request.saveAll = () => {
     let tom, emma;
     let warner, disney;

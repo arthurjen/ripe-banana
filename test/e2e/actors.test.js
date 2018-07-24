@@ -3,7 +3,7 @@ const request = require('./request');
 const { dropDatabase } = require('./_db');
 const { checkOk, saveActorData, makeSimple } = request;
 
-describe.only('Actors API', () => {
+describe('Actors API', () => {
 
     beforeEach(() => dropDatabase());
 
