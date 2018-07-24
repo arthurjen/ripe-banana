@@ -11,22 +11,6 @@ describe('Studios API', () => {
     let banks, gameNight;
 
     beforeEach(() => {
-        // const data = {
-        //     name: 'Warner Bros.',
-        //     address: {
-        //         city: 'Burbank',
-        //         state: 'California',
-        //         country: 'USA'
-        //     }    
-        // };
-        // return request
-        //     .post('/api/studios')
-        //     .send(data)
-        //     .then(checkOk)
-        //     .then(({ body }) => {
-        //         delete body.__v;
-        //         warner = body;
-        //     });
         return saveStudioData()
             .then(data => {
                 [warner, disney] = data.studios;
@@ -39,7 +23,7 @@ describe('Studios API', () => {
         assert.isOk(disney._id);
     });
 
-    it.skip('returns a studio on GET', () => {
+    it('returns a studio on GET', () => {
         return request
             .get(`/api/studios/${disney._id}`)
             .then(checkOk)
@@ -64,7 +48,7 @@ describe('Studios API', () => {
             });
     });
 
-    it.skip('DOES NOT remove a studio if it exists as a property of a film', () => {
+    it('DOES NOT remove a studio if it exists as a property of a film', () => {
         return request
             .delete(`/api/studios/${warner._id}`)
             .then(checkOk)
@@ -73,7 +57,7 @@ describe('Studios API', () => {
             });
     });
 
-    it.skip('Removes a studio on DELETE', () => {
+    it('Removes a studio on DELETE', () => {
         return request
             .delete(`/api/films/${gameNight._id}`)
             .then(checkOk)
