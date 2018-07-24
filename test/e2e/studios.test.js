@@ -1,9 +1,9 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropDatabase } = require('./_db');
-const { checkOk, saveAll, makeSimple } = request;
+const { checkOk, saveStudioData, makeSimple } = request;
 
-describe('Studios API', () => {
+describe.only('Studios API', () => {
 
     beforeEach(() => dropDatabase());
 
@@ -11,35 +11,35 @@ describe('Studios API', () => {
     let banks, gameNight;
 
     beforeEach(() => {
-        const data = {
-            name: 'Warner Bros.',
-            address: {
-                city: 'Burbank',
-                state: 'California',
-                country: 'USA'
-            }    
-        };
-        return request
-            .post('/api/studios')
-            .send(data)
-            // .then(checkOk)
-            .then(({ body }) => {
-                delete body.__v;
-                warner = body;
-            });
-        // return saveAll()
-        //     .then(data => {
-        //         [warner, disney] = data.studios;
-        //         [banks, gameNight] = data.films;
+        // const data = {
+        //     name: 'Warner Bros.',
+        //     address: {
+        //         city: 'Burbank',
+        //         state: 'California',
+        //         country: 'USA'
+        //     }    
+        // };
+        // return request
+        //     .post('/api/studios')
+        //     .send(data)
+        //     .then(checkOk)
+        //     .then(({ body }) => {
+        //         delete body.__v;
+        //         warner = body;
         //     });
+        return saveStudioData()
+            .then(data => {
+                [warner, disney] = data.studios;
+                [banks, gameNight] = data.films;
+            });
     });    
 
-    it.only('saves a studio', () => {
+    it('saves a studio', () => {
         assert.isOk(warner._id);
-        // assert.isOk(disney._id);
+        assert.isOk(disney._id);
     });
 
-    it('returns a studio on GET', () => {
+    it.skip('returns a studio on GET', () => {
         return request
             .get(`/api/studios/${disney._id}`)
             .then(checkOk)
@@ -53,18 +53,18 @@ describe('Studios API', () => {
             });
     });
 
-    it.only('returns all studios on GET', () => {
+    it('returns all studios on GET', () => {
         return request
             .get('/api/studios')
             .then(checkOk)
             .then(({ body }) => {
                 delete warner.address;
-                // delete disney.address;
-                assert.deepEqual(body, [warner]);
+                delete disney.address;
+                assert.deepEqual(body, [warner, disney]);
             });
     });
 
-    it('DOES NOT remove a studio if it exists as a property of a film', () => {
+    it.skip('DOES NOT remove a studio if it exists as a property of a film', () => {
         return request
             .delete(`/api/studios/${warner._id}`)
             .then(checkOk)
@@ -73,7 +73,7 @@ describe('Studios API', () => {
             });
     });
 
-    it('Removes a studio on DELETE', () => {
+    it.skip('Removes a studio on DELETE', () => {
         return request
             .delete(`/api/films/${gameNight._id}`)
             .then(checkOk)

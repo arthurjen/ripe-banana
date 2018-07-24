@@ -22,6 +22,22 @@ const save = (data, resource) => {
         });
 };
 
+request.saveStudioData = () => {
+    let warner, disney;
+    return save(data.studios, 'studios')
+        .then(saved => {
+            data.studios = saved;
+            [warner, disney] = saved;
+            data.films[0].studio = disney._id;
+            data.films[1].studio = warner._id;
+            return save(data.films, 'films'); 
+        })
+        .then(saved => {
+            data.films = saved;
+            return data;
+        });
+};
+
 request.saveAll = () => {
     let tom, emma;
     let warner, disney;
