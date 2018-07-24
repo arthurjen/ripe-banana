@@ -7,7 +7,7 @@ const request = chai.request(app.callback()).keepOpen();
 const data = require('./data');
 
 request.checkOk = res => {
-    if(res.status !== 200) throw new Error('expected 200 http status code');
+    if(res.status !== 200) throw new Error('expected 200, instead got', res.status);
     return res;
 };
 
@@ -30,6 +30,22 @@ request.saveStudioData = () => {
             [warner, disney] = saved;
             data.films[0].studio = disney._id;
             data.films[1].studio = warner._id;
+            return save(data.films, 'films'); 
+        })
+        .then(saved => {
+            data.films = saved;
+            return data;
+        });
+};
+
+request.saveActorData = () => {
+    let tom, emma;
+    return save(data.actors, 'actors')
+        .then(saved => {
+            data.actors = saved;
+            [tom,, emma] = saved;
+            data.films[0].cast[0].actor = tom._id;
+            data.films[0].cast[1].actor = emma._id;
             return save(data.films, 'films'); 
         })
         .then(saved => {

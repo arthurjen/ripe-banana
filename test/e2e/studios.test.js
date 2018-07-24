@@ -3,7 +3,7 @@ const request = require('./request');
 const { dropDatabase } = require('./_db');
 const { checkOk, saveStudioData, makeSimple } = request;
 
-describe.only('Studios API', () => {
+describe('Studios API', () => {
 
     beforeEach(() => dropDatabase());
 
